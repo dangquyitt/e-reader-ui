@@ -17,6 +17,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useLogin, useNotify } from "react-admin";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { LoginType } from "../../constants/loginType";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -77,9 +78,12 @@ export default function Login(props) {
     setIsOpenForgotPassword(true);
   };
   const onSubmit = async (data) => {
-    console.log(data);
-
     login({ email: data.email, password: data.password }).catch(() =>
+      notify("Invalid email or password")
+    );
+  };
+  const handleLoginWithGoogle = (idTokenString) => {
+    login({ loginType: LoginType.GOOGLE, idTokenString }).catch(() =>
       notify("Invalid email or password")
     );
   };
@@ -183,7 +187,11 @@ export default function Login(props) {
             >
               Login with Google
             </Button>
-            <GoogleLogin onSuccess={(credential) => console.log(credential)} />
+            <GoogleLogin
+              onSuccess={(credentials) =>
+                handleLoginWithGoogle(credentials.credential)
+              }
+            />
             {/* <Button
               fullWidth
               variant="outlined"

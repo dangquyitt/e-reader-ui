@@ -1,3 +1,4 @@
+import { LoginType } from "../constants/loginType";
 import axiosInstance from "../services/api";
 
 const accessControlStrategies = {
@@ -10,12 +11,20 @@ const accessControlStrategies = {
 };
 
 const authProvider = {
-  async login({ email, password }) {
+  async login({ loginType, idTokenString, email, password }) {
     try {
-      const response = await axiosInstance.post("/auth/login", {
-        email,
-        password,
-      });
+      const responseFunc = async () => {
+        if (loginType === LoginType.GOOGLE) {
+          return await axiosInstance.post("/auth/googleLogin", {
+            idTokenString,
+          });
+        }
+        return await axiosInstance.post("/auth/login", {
+          email,
+          password,
+        });
+      };
+      const response = await responseFunc();
       localStorage.setItem("accessToken", response.data.accessToken);
       const jwtPayload = JSON.parse(
         window.atob(response.data.accessToken.split(".")[1])
