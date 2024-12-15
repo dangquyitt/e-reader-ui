@@ -7,18 +7,30 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import { sendResertPassword } from "../../../services/auth";
+import { useNotify } from "react-admin";
 
 function ForgotPassword({ open, handleClose }) {
+  const notify = useNotify();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    try {
+      const response = await sendResertPassword(email);
+      notify(response.message, { type: "success" });
+      handleClose();
+    } catch (error) {
+      notify(error.response.data.message, { type: "error" });
+    }
+  };
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       PaperProps={{
         component: "form",
-        onSubmit: (event) => {
-          event.preventDefault();
-          handleClose();
-        },
+        onSubmit: handleSubmit,
       }}
     >
       <DialogTitle>Reset password</DialogTitle>

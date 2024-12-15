@@ -18,6 +18,7 @@ import { useLogin, useNotify } from "react-admin";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { LoginType } from "../../constants/loginType";
+import { sendVerifyEmail } from "../../services/auth";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -70,22 +71,39 @@ export default function Login(props) {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const email = watch("email", "");
   const [isOpenForgotPassword, setIsOpenForgotPassword] = useState(false);
+  const [isOpenSendEmailVerification, setIsOpenSendEmailVerification] =
+    useState(false);
   const handleCloseOpenForgotPassword = () => {
     setIsOpenForgotPassword(false);
   };
   const handleClickOpenForgotPassword = () => {
     setIsOpenForgotPassword(true);
   };
+  const handleSendEmailVerification = async () => {
+    try {
+      const response = await sendVerifyEmail(email);
+      notify(response.message, { type: "success" });
+      setIsOpenSendEmailVerification(false);
+    } catch (error) {
+      notify(error.response.data.message, { type: "error" });
+    }
+  };
   const onSubmit = async (data) => {
-    login({ email: data.email, password: data.password }).catch(() =>
-      notify("Invalid email or password")
-    );
+    login({ email: data.email, password: data.password })
+      .then((data) => notify(data.message, { type: "success" }))
+      .catch((error) => {
+        if (error.response.data.code === "user.not_verified") {
+          setIsOpenSendEmailVerification(true);
+        }
+        notify(error.response.data.message, { type: "error" });
+      });
   };
   const handleLoginWithGoogle = (idTokenString) => {
-    login({ loginType: LoginType.GOOGLE, idTokenString }).catch(() =>
-      notify("Invalid email or password")
-    );
+    login({ loginType: LoginType.GOOGLE, idTokenString })
+      .then((data) => notify(data.message, { type: "success" }))
+      .catch((error) => notify(error.response.data.message, { type: "error" }));
   };
   return (
     <>
@@ -116,14 +134,18 @@ export default function Login(props) {
                 id="email"
                 type="email"
                 name="email"
-                // helperText={errors.email?.message}
+                helperText={errors.email?.message}
                 placeholder="your@email.com"
                 autoComplete="email"
                 {...register("email", {
                   required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "invalid email address",
+                  },
                 })}
-                // error={errors.email}
-                // color={errors.email ? "error" : "primary"}
+                error={errors.email}
+                color={errors.email ? "error" : "primary"}
                 autoFocus
                 fullWidth
                 variant="outlined"
@@ -146,19 +168,29 @@ export default function Login(props) {
               <TextField
                 placeholder="••••••"
                 type="password"
-                // helperText={errors.password?.message}
+                helperText={errors.password?.message}
                 id="password"
                 {...register("password", {
                   required: "Password is required",
                 })}
-                // error={errors.password}
+                error={errors.password}
                 autoComplete="current-password"
-                autoFocus
                 fullWidth
                 variant="outlined"
-                // color={errors.password ? "error" : "primary"}
+                color={errors.password ? "error" : "primary"}
               />
             </FormControl>
+            {isOpenSendEmailVerification && (
+              <Link
+                component="button"
+                type="button"
+                onClick={handleSendEmailVerification}
+                variant="body2"
+                sx={{ alignSelf: "baseline" }}
+              >
+                Click here to resend email verification?
+              </Link>
+            )}
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -179,14 +211,14 @@ export default function Login(props) {
           </Box>
           <Divider>or</Divider>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Button
+            {/* <Button
               fullWidth
               variant="outlined"
               // onClick={handleClickLoginWithGoogle}
               startIcon={<GoogleIcon />}
             >
               Login with Google
-            </Button>
+            </Button> */}
             <GoogleLogin
               onSuccess={(credentials) =>
                 handleLoginWithGoogle(credentials.credential)

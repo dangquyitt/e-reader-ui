@@ -30,8 +30,9 @@ const authProvider = {
         window.atob(response.data.accessToken.split(".")[1])
       );
       localStorage.setItem("roles", jwtPayload.roles || []);
+      return Promise.resolve(response);
     } catch (error) {
-      throw new Error(error.response.data.message);
+      return Promise.reject(error);
     }
   },
   async checkError(error) {
