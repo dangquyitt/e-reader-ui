@@ -14,6 +14,7 @@ import { Route } from "react-router-dom";
 import Register from "./pages/Register/Register";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import EmailVerification from "./pages/EmailVerification/EmailVerification";
+import Reader from "./pages/Reader/Reader";
 
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -35,7 +36,9 @@ const App = () => (
       {/* End add the public routes*/}
 
       {/* Start add the private routes */}
-      <CustomRoutes noLayout></CustomRoutes>
+      <CustomRoutes noLayout>
+        <Route path="/reader" element={<Reader />} />
+      </CustomRoutes>
       {/* End add the private routes */}
     </Admin>
   </GoogleOAuthProvider>

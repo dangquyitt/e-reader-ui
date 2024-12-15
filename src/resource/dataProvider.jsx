@@ -12,9 +12,10 @@ const dataProvider = {
     };
     const url = `/${resource}/filter`;
     const response = await axiosInstance.post(url, body);
+    console.log(response);
     return {
-      data: response.data.data,
-      total: response.data.total,
+      data: response.data,
+      total: response.pagination.total,
     };
   },
 
