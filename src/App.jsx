@@ -1,10 +1,4 @@
-import {
-  Admin,
-  CustomRoutes,
-  ListGuesser,
-  Resource,
-  ShowGuesser,
-} from "react-admin";
+import { Admin, CustomRoutes, Resource } from "react-admin";
 import Login from "./pages/login/Login";
 import { bookResource } from "./resource/book";
 import dataProvider from "./resource/dataProvider";
@@ -15,18 +9,23 @@ import Register from "./pages/Register/Register";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import EmailVerification from "./pages/EmailVerification/EmailVerification";
 import Reader from "./pages/Reader/Reader";
-import BookShowLayout from "./components/BookShowLayout";
-import MarketingPage from "./pages/Pricing/MarketingPage";
+import BookShowLayout from "./pages/Reader/Reader";
+import { AppLayout } from "./AppLayout";
+import Pricing from "./pages/Pricing/Pricing";
+import { favoriteResource } from "./resource/favorite";
+import { collectionResource } from "./resource/collection";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
+      layout={AppLayout}
       loginPage={Login}
       dataProvider={dataProvider}
       authProvider={authProvider}
       requireAuth
     >
       <Resource {...bookResource} />
-      <Resource name="roles" list={ListGuesser} show={ShowGuesser} />
+      <Resource {...favoriteResource} />
+      <Resource {...collectionResource} />
 
       {/* Start add the public routes */}
       <CustomRoutes noLayout>
@@ -34,12 +33,12 @@ const App = () => (
         <Route path="/resetPassword" element={<ResetPassword />} />
         <Route path="/emailVerification" element={<EmailVerification />} />
         <Route path="/detail" element={<BookShowLayout />} />
-        <Route path="/marketing" element={<MarketingPage />} />
       </CustomRoutes>
       {/* End add the public routes*/}
 
       {/* Start add the private routes */}
-      <CustomRoutes noLayout>
+      <CustomRoutes>
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/reader" element={<Reader />} />
       </CustomRoutes>
       {/* End add the private routes */}

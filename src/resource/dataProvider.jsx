@@ -23,7 +23,7 @@ const dataProvider = {
     const url = `/${resource}/${params.id}`;
     const response = await axiosInstance.get(url);
     return {
-      data: response.data.data,
+      data: response.data,
     };
   },
 
