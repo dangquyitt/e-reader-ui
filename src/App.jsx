@@ -15,7 +15,8 @@ import Register from "./pages/Register/Register";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import EmailVerification from "./pages/EmailVerification/EmailVerification";
 import Reader from "./pages/Reader/Reader";
-
+import BookShowLayout from "./components/BookShowLayout";
+import MarketingPage from "./pages/Pricing/MarketingPage";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
@@ -32,6 +33,8 @@ const App = () => (
         <Route path="/register" element={<Register />} />
         <Route path="/resetPassword" element={<ResetPassword />} />
         <Route path="/emailVerification" element={<EmailVerification />} />
+        <Route path="/detail" element={<BookShowLayout />} />
+        <Route path="/marketing" element={<MarketingPage />} />
       </CustomRoutes>
       {/* End add the public routes*/}
 
