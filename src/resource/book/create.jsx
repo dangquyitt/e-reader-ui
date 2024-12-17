@@ -19,15 +19,10 @@ export const BookCreate = () => (
       <Card>
         <SimpleForm>
           <TextInput source="title" />
-          <TextInput source="author" />
-          <SelectInput
-            source="availability"
-            choices={[
-              { id: "in_stock", name: "In stock" },
-              { id: "out_of_stock", name: "Out of stock" },
-              { id: "out_of_print", name: "Out of print" },
-            ]}
-          />
+          <TextInput source="description" />
+          <TextInput source="total page" />
+          <TextInput source="rating" />
+          <TextInput source="published year" />
           <FileInput source="attachments">
             <FileField source="src" title="title" />
           </FileInput>
