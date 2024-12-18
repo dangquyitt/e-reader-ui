@@ -4,7 +4,8 @@ export const CollectionList = (props) => {
   return (
     <List>
       <Datagrid>
-        <TextField source="id" />
+        <TextField source="user_id" />
+        <TextField source="name" />
       </Datagrid>
     </List>
   );

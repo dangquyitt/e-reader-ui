@@ -14,16 +14,13 @@ export const BookEdit = () => (
       <Card>
         <CardContent>
           <SimpleForm>
+            <TextInput source="id" />
             <TextInput source="title" />
-            <TextInput source="author" />
-            <SelectInput
-              source="availability"
-              choices={[
-                { id: "in_stock", name: "In stock" },
-                { id: "out_of_stock", name: "Out of stock" },
-                { id: "out_of_print", name: "Out of print" },
-              ]}
-            />
+            <TextInput source="description" />
+            <TextInput source="totalPage" />
+            <TextInput source="rating" />
+            <TextInput source="publishedYear" />
+            <TextInput source="coverImageUrl" />
           </SimpleForm>
         </CardContent>
       </Card>

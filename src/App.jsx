@@ -14,6 +14,7 @@ import { AppLayout } from "./AppLayout";
 import Pricing from "./pages/Pricing/Pricing";
 import { favoriteResource } from "./resource/favorite";
 import { collectionResource } from "./resource/collection";
+import { userResource } from "./resource/user";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
@@ -26,6 +27,7 @@ const App = () => (
       <Resource {...bookResource} />
       <Resource {...favoriteResource} />
       <Resource {...collectionResource} />
+      <Resource {...userResource} />
 
       {/* Start add the public routes */}
       <CustomRoutes noLayout>

@@ -23,7 +23,16 @@ export const BookCreate = () => (
           <TextInput source="total page" />
           <TextInput source="rating" />
           <TextInput source="published year" />
-          <FileInput source="attachments">
+          <FileInput
+            source="attachments"
+            onChange={(files) => {
+              console.log(files);
+              const file = files.rawFile;
+              console.log(file); // file cần được lấy từ files[0]
+              const url = URL.createObjectURL(file);
+              setFileUrl(url);
+            }}
+          >
             <FileField source="src" title="title" />
           </FileInput>
           <ImageInput source="pictures" label="Related pictures">

@@ -10,7 +10,6 @@ import {
   SearchInput,
   TextInput,
   SelectInput,
-  SortButton,
   EditButton,
 } from "react-admin";
 const postFilters = [
@@ -32,6 +31,7 @@ export const BookList = (props) => {
   return (
     <>
       <List
+        perPage={1}
         actions={<PostListActions />}
         pagination={<Pagination />}
         filters={postFilters}
