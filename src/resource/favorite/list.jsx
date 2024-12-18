@@ -1,17 +1,16 @@
 import {
-  CreateButton,
   Datagrid,
-  ImageField,
   List,
-  NumberField,
   Pagination,
   TextField,
   TopToolbar,
   SearchInput,
   TextInput,
   SelectInput,
-  SortButton,
   EditButton,
+  ReferenceField,
+  ImageField,
+  DeleteButton,
 } from "react-admin";
 const bookFilters = [
   <SearchInput source="q" alwaysOn />,
@@ -34,15 +33,16 @@ export const FavoriteList = (props) => {
         pagination={<Pagination />}
         filters={bookFilters}
       >
-        <Datagrid>
-          <TextField source="id" />
-          <TextField source="title" />
-          <TextField source="description" />
-          <TextField source="totalPage" />
-          <TextField source="rating" />
-          <NumberField source="publishedYear" />
-          <ImageField source="coverImageUrl" />
-          <EditButton />
+        <Datagrid
+          rowClick={(id, resource, record) => {
+            return `/books/${record.bookId}/show`;
+          }}
+        >
+          <ReferenceField source="bookId" reference="books">
+            <ImageField source="coverImageUrl" />
+            <TextField source="title" />
+          </ReferenceField>
+          <DeleteButton />
         </Datagrid>
       </List>
     </>

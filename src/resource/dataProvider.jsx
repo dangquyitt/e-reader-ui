@@ -12,10 +12,28 @@ const dataProvider = {
     };
     const url = `/${resource}/filter`;
     const response = await axiosInstance.post(url, body);
-    console.log(response);
     return {
       data: response.data,
       total: response.pagination.total,
+    };
+  },
+
+  getMany: async (resource, params) => {
+    const { ids } = params;
+    const body = {
+      filter: {
+        ids,
+      },
+      pagination: {
+        page: 1,
+        pageSize: 1000,
+      },
+    };
+    const url = `/${resource}/filter`;
+    const response = await axiosInstance.post(url, body);
+    console.log(response);
+    return {
+      data: response.data,
     };
   },
 

@@ -11,7 +11,9 @@ import Typography from "@mui/material/Typography";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { Grid } from "@mui/material";
-import { Layout } from "react-admin";
+import { useState } from "react";
+import { getAllPlans } from "../../services/plan";
+import { useEffect } from "react";
 const tiers = [
   {
     title: "Free",
@@ -58,6 +60,18 @@ const tiers = [
 ];
 
 export default function Pricing() {
+  const [plans, setPlans] = useState([]);
+  const fetchPlans = async () => {
+    try {
+      const response = await getAllPlans();
+      setPlans(response.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
   return (
     <Container
       id="pricing"

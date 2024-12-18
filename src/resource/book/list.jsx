@@ -14,9 +14,10 @@ import {
 } from "react-admin";
 const postFilters = [
   <SearchInput source="q" alwaysOn />,
-  <TextInput label="Title" source="title" defaultValue="Hello, World!" />,
+  <TextInput label="Title" source="title" alwaysOn />,
   <SelectInput source="category" />,
 ];
+
 const PostListActions = () => (
   <TopToolbar>
     {/* Nút Create */}

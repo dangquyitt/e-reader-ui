@@ -8,6 +8,7 @@ import {
   ImageField,
   ArrayField,
   Datagrid,
+  ReferenceField,
 } from "react-admin";
 import React, { useState, useEffect } from "react";
 import { useDataProvider } from "react-admin";
@@ -78,10 +79,10 @@ export const BookShow = () => {
             <ImageField source="coverImageUrl" />
           </TabbedShowLayout.Tab>
           <TabbedShowLayout.Tab label="Comments" path="body">
-            <ArrayField source="comments" record={mockBookData}>
+            <ArrayField source="comments">
               <Datagrid bulkActionButtons={false}>
                 <TextField source="id" />
-                <TextField source="text" />
+                <TextField source="content" />
               </Datagrid>
             </ArrayField>
             <SimpleForm onSubmit={handleSave}>
