@@ -9,35 +9,31 @@ import {
   ArrayField,
   Datagrid,
   ReferenceField,
+  Button,
 } from "react-admin";
 import React, { useState, useEffect } from "react";
-import { useDataProvider } from "react-admin";
+import { useDataProvider, WithRecord } from "react-admin";
 import { AddToFavoritesButton } from "../../components/AddToFavorite/AddToFavoritesButton";
-const mockBookData = {
-  id: 1,
-  title: "The Great Book",
-  description: "A fascinating journey through time and space.",
-  totalPage: 350,
-  rating: 4.5,
-  publishedYear: 2022,
-  coverImageUrl: "https://via.placeholder.com/150",
-  comments: [
-    { id: 1, text: "Amazing read! The plot twists were incredible." },
-    { id: 2, text: "I couldn't put it down! A must-read for sci-fi fans." },
-    {
-      id: 3,
-      text: "The book started slow but picked up pace towards the end.",
-    },
-    { id: 4, text: "Interesting characters, but the ending felt rushed." },
-    {
-      id: 5,
-      text: "A wonderful exploration of human nature. Highly recommend!",
-    },
-  ],
-};
+import { useNavigate } from "react-router-dom";
+import { useStore, useRecordContext } from "react-admin";
+
 export const BookShow = () => {
   const dataProvider = useDataProvider();
   const [comments, setComments] = useState([]);
+  const BookAuthor = () => {
+    const record = useRecordContext();
+    const [, setFileUrl] = useStore("fileUrl", null); // useStore(key, initialValue)
+
+    useEffect(() => {
+      if (record && record.fileUrl) {
+        setFileUrl(record.fileUrl); // Lưu fileUrl vào store chỉ khi record thay đổi
+      }
+    }, [record, setFileUrl]); // Lưu fileUrl vào store
+
+    console.log(record.fileUrl);
+    return null;
+  };
+
   const fetchComments = async () => {
     try {
       const { data } = await dataProvider.getList("comments", {
@@ -50,7 +46,6 @@ export const BookShow = () => {
       console.error("Error fetching comments:", error);
     }
   };
-
   // Gọi API lấy danh sách bình luận khi component được render
   useEffect(() => {
     fetchComments();
@@ -70,13 +65,19 @@ export const BookShow = () => {
           <TabbedShowLayout.Tab label="Infomation">
             <TextField source="id" sx={{ fontSize: "16px" }} />
             <AddToFavoritesButton />
-
+            <Button
+              label="Go to Detail"
+              onClick={(e) => {
+                e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+              }}
+            />
             <TextField source="title" />
             <TextField source="description" />
             <TextField source="totalPage" />
             <TextField source="rating" />
             <NumberField source="publishedYear" />
             <ImageField source="coverImageUrl" />
+            <BookAuthor />
           </TabbedShowLayout.Tab>
           <TabbedShowLayout.Tab label="Comments" path="body">
             <ArrayField source="comments">

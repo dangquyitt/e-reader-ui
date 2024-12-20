@@ -15,6 +15,7 @@ import Pricing from "./pages/Pricing/Pricing";
 import { favoriteResource } from "./resource/favorite";
 import { collectionResource } from "./resource/collection";
 import { userResource } from "./resource/user";
+import ResponsiveDialog from "./components/Dialog/ResponsiveDialog";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
@@ -41,6 +42,18 @@ const App = () => (
       {/* Start add the private routes */}
       <CustomRoutes>
         <Route path="/pricing" element={<Pricing />} />
+        <Route
+          path="/pricing/isSuccess"
+          element={
+            <ResponsiveDialog
+              title={"Congratulations on your successful payment!"}
+            />
+          }
+        />
+        <Route
+          path="/pricing/isFailure"
+          element={<ResponsiveDialog title={"Your payment failed!"} />}
+        />
         <Route path="/reader" element={<Reader />} />
       </CustomRoutes>
       {/* End add the private routes */}

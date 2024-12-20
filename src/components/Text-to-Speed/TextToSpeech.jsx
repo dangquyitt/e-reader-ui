@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "react-admin";
 
 const TextToSpeech = ({ text }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -24,7 +25,7 @@ const TextToSpeech = ({ text }) => {
   return (
     <div>
       <button onClick={handleReadText}>
-        {isSpeaking ? "Dừng Đọc" : "Đọc Văn Bản"}
+        {isSpeaking ? <Button>Dừng đọc</Button> : <Button>Đọc văn bản</Button>}
       </button>
     </div>
   );
