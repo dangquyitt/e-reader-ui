@@ -3,83 +3,73 @@ import {
   TabbedShowLayout,
   TextField,
   SimpleForm,
-  TextInput,
   NumberField,
   ImageField,
   ArrayField,
   Datagrid,
-  ReferenceField,
   Button,
+  ReferenceArrayInput,
+  ChipField,
+  useShowController,
+  DeleteButton,
+  Toolbar,
+  SaveButton,
+  AutocompleteArrayInput,
+  useNotify,
 } from "react-admin";
 import React, { useState, useEffect } from "react";
-import { useDataProvider, WithRecord } from "react-admin";
+import { useDataProvider } from "react-admin";
 import { AddToFavoritesButton } from "../../components/AddToFavorite/AddToFavoritesButton";
-import { useNavigate } from "react-router-dom";
-import { useStore, useRecordContext } from "react-admin";
+import { createBookCollection } from "../../services/bookCollection";
 
-export const BookShow = () => {
+const CustomToolbar = (props) => (
+  <Toolbar {...props}>
+    <SaveButton /> {/* Không thêm DeleteButton */}
+  </Toolbar>
+);
+
+export const BookShow = (props) => {
+  const notify = useNotify();
+  const { record } = useShowController();
   const dataProvider = useDataProvider();
-  const [comments, setComments] = useState([]);
-  const BookAuthor = () => {
-    const record = useRecordContext();
-    const [, setFileUrl] = useStore("fileUrl", null); // useStore(key, initialValue)
 
-    useEffect(() => {
-      if (record && record.fileUrl) {
-        setFileUrl(record.fileUrl); // Lưu fileUrl vào store chỉ khi record thay đổi
-      }
-    }, [record, setFileUrl]); // Lưu fileUrl vào store
-
-    console.log(record.fileUrl);
-    return null;
-  };
-
-  const fetchComments = async () => {
-    try {
-      const { data } = await dataProvider.getList("comments", {
-        pagination: { page: 1, perPage: 10 },
-        sort: { field: "createdAt", order: "DESC" },
-        filter: {},
-      });
-      setComments(data); // Cập nhật danh sách bình luận
-    } catch (error) {
-      console.error("Error fetching comments:", error);
+  const handleAddBookToCollections = async (data) => {
+    for (const collectionId of data?.collectionIds || []) {
+      try {
+        await createBookCollection(bookId, collectionId);
+      } catch (error) {}
     }
   };
-  // Gọi API lấy danh sách bình luận khi component được render
-  useEffect(() => {
-    fetchComments();
-  }, []);
-  const handleSave = async (values) => {
+
+  const handleDeleteBookCollection = (data) => {};
+
+  const handleCreateCollection = async (name) => {
     try {
-      await dataProvider.create("comments", { data: values });
-      alert("Comment added successfully!");
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
+      const resp = await dataProvider.create("collections", { data: { name } });
+      return resp.data.name;
+    } catch (error) {}
   };
+
   return (
-    <>
-      <Show>
-        <TabbedShowLayout>
-          <TabbedShowLayout.Tab label="Infomation">
-            <TextField source="id" sx={{ fontSize: "16px" }} />
-            <AddToFavoritesButton />
-            <Button
-              label="Go to Detail"
-              onClick={(e) => {
-                e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
-              }}
-            />
-            <TextField source="title" />
-            <TextField source="description" />
-            <TextField source="totalPage" />
-            <TextField source="rating" />
-            <NumberField source="publishedYear" />
-            <ImageField source="coverImageUrl" />
-            <BookAuthor />
-          </TabbedShowLayout.Tab>
-          <TabbedShowLayout.Tab label="Comments" path="body">
+    <Show>
+      <TabbedShowLayout>
+        <TabbedShowLayout.Tab label="Infomation">
+          <TextField source="id" sx={{ fontSize: "16px" }} />
+          <AddToFavoritesButton />
+          <Button
+            label="Go to Detail"
+            onClick={(e) => {
+              e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+            }}
+          />
+          <TextField source="title" />
+          <TextField source="description" />
+          <TextField source="totalPage" />
+          <TextField source="rating" />
+          <NumberField source="publishedYear" />
+          <ImageField source="coverImageUrl" />
+        </TabbedShowLayout.Tab>
+        {/* <TabbedShowLayout.Tab label="Comments" path="body">
             <ArrayField source="comments">
               <Datagrid bulkActionButtons={false}>
                 <TextField source="id" />
@@ -88,11 +78,33 @@ export const BookShow = () => {
             </ArrayField>
             <SimpleForm onSubmit={handleSave}>
               <TextInput source="comment" label="Add a Comment" fullWidth />
-              {/* You can add other fields like rating for the comment, etc. */}
             </SimpleForm>
-          </TabbedShowLayout.Tab>
-        </TabbedShowLayout>
-      </Show>
-    </>
+          </TabbedShowLayout.Tab> */}
+        <TabbedShowLayout.Tab label="Collections" path="body">
+          <ArrayField source="collections">
+            <Datagrid bulkActionButtons={false} rowClick>
+              <ChipField source="name" label="Name" />
+              <DeleteButton
+                onClick={(data) => {
+                  console.log(data);
+                }}
+              />
+            </Datagrid>
+          </ArrayField>
+          <SimpleForm
+            toolbar={<CustomToolbar />}
+            onSubmit={handleAddBookToCollections}
+          >
+            <ReferenceArrayInput source="collectionIds" reference="collections">
+              <AutocompleteArrayInput
+                createItemLabel="Add a new collection: %{item}"
+                onCreate={handleCreateCollection}
+                filterToQuery={(searchText) => ({ name: searchText })}
+              />
+            </ReferenceArrayInput>
+          </SimpleForm>
+        </TabbedShowLayout.Tab>
+      </TabbedShowLayout>
+    </Show>
   );
 };

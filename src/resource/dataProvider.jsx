@@ -3,10 +3,12 @@ import axiosInstance from "../services/api";
 const dataProvider = {
   getList: async (resource, params) => {
     const { page, perPage } = params.pagination;
+    const { field, order } = params.sort;
     const body = {
       pagination: {
         page: page,
         pageSize: perPage,
+        sort: { field, order },
       },
       filter: params.filter,
     };

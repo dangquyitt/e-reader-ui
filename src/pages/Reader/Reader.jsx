@@ -76,7 +76,7 @@ export default function Reader() {
   return (
     <div style={{ height: "100vh" }}>
       <ReactReader
-        url={fileUrl}
+        url="https://react-reader.metabits.no/files/alice.epub"
         title={"Alice in wonderland"}
         location={location}
         locationChanged={(epubcfi) => setLocation(epubcfi)}
