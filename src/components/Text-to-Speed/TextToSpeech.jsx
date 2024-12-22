@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "react-admin";
 
-const TextToSpeech = ({ text }) => {
+const TextToSpeech = ({ text, language }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Hàm xử lý việc đọc văn bản
@@ -13,7 +13,7 @@ const TextToSpeech = ({ text }) => {
 
       // Thiết lập giọng nói (Voice)
       const voices = speechSynthesis.getVoices();
-      utterance.voice = voices.find((voice) => voice.lang === "en-US"); // Chọn giọng nói tiếng Anh
+      utterance.voice = voices.find((voice) => voice.lang === language); // Chọn giọng nói tiếng Anh
 
       speechSynthesis.speak(utterance);
     } else {
