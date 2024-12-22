@@ -8,15 +8,15 @@ const dataProvider = {
       pagination: {
         page: page,
         pageSize: perPage,
-        sort: { field, order },
       },
+      orderBy: { field, order },
       filter: params.filter,
     };
     const url = `/${resource}/filter`;
     const response = await axiosInstance.post(url, body);
     return {
       data: response.data,
-      total: response.pagination.total,
+      total: response.pagination.total ? response.pagination.total : 0,
     };
   },
 
@@ -33,7 +33,6 @@ const dataProvider = {
     };
     const url = `/${resource}/filter`;
     const response = await axiosInstance.post(url, body);
-    console.log(response);
     return {
       data: response.data,
     };

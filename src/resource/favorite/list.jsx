@@ -19,10 +19,7 @@ const bookFilters = [
 ];
 const PostListActions = () => (
   <TopToolbar>
-    {/* Nút Create */}
-    {/* Bạn có thể thêm các nút khác ở đây */}
     <EditButton />
-    {/* <Button>Custom Action</Button> */}
   </TopToolbar>
 );
 export const FavoriteList = (props) => {
@@ -34,6 +31,7 @@ export const FavoriteList = (props) => {
         filters={bookFilters}
       >
         <Datagrid
+          bulkActionButtons={false}
           rowClick={(id, resource, record) => {
             return `/books/${record.bookId}/show`;
           }}
@@ -42,7 +40,7 @@ export const FavoriteList = (props) => {
             <ImageField source="coverImageUrl" />
             <TextField source="title" />
           </ReferenceField>
-          <DeleteButton />
+          <DeleteButton mutationMode="optimistic" />
         </Datagrid>
       </List>
     </>

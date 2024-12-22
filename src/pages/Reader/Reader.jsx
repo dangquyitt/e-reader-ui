@@ -10,12 +10,13 @@ import {
 import { useStore } from "react-admin";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import TextToSpeech from "../../components/Text-to-Speed/TextToSpeech";
+import Epub from "epubjs";
 export default function Reader() {
-  const [location, setLocation] = useState(
-    localStorage.getItem("epub-location") || null
+  const [currentReadingBook, setCurrentReadingBook] = useStore(
+    "currentReadingBook",
+    {}
   );
-  const [fileUrl] = useStore("fileUrl");
-  console.log("fileUrl", fileUrl);
+  const [readingProgress, setReadingProgress] = useState();
   const [iconPosition, setIconPosition] = useState({ top: 0, left: 0 });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [translatedText, setTranslatedText] = useState("");
@@ -26,6 +27,9 @@ export default function Reader() {
     setSelectedText(""); // Xóa văn bản bôi đen
   };
 
+  const [title, setTitle] = useState("");
+  const [totalPages, setTotalPages] = useState("");
+  const [coverImage, setCoverImage] = useState("");
   const translateText = async (text) => {
     try {
       // Đây là ví dụ sử dụng một API giả
@@ -48,6 +52,7 @@ export default function Reader() {
       return "Có lỗi xảy ra khi dịch.";
     }
   };
+
   const handleButtonClick = () => {
     setShowChild(true); // Cập nhật trạng thái để hiển thị component
   };
@@ -76,8 +81,8 @@ export default function Reader() {
   return (
     <div style={{ height: "100vh" }}>
       <ReactReader
-        url="https://react-reader.metabits.no/files/alice.epub"
-        title={"Alice in wonderland"}
+        url={currentReadingBook.fileUrl}
+        title={currentReadingBook.title}
         location={location}
         locationChanged={(epubcfi) => setLocation(epubcfi)}
         getRendition={handleRendition} // Gán hàm khi rendition sẵn sàng

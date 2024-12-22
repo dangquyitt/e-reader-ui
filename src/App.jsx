@@ -16,6 +16,10 @@ import { favoriteResource } from "./resource/favorite";
 import { collectionResource } from "./resource/collection";
 import { userResource } from "./resource/user";
 import ResponsiveDialog from "./components/Dialog/ResponsiveDialog";
+import { commentResource } from "./resource/comment";
+import { subscriptionResource } from "./resource/subscription";
+import { tagResource } from "./resource/tag";
+import ChangePassword from "./pages/ChangePassword/ChangePassword";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
@@ -28,6 +32,9 @@ const App = () => (
       <Resource {...bookResource} />
       <Resource {...favoriteResource} />
       <Resource {...collectionResource} />
+      <Resource {...subscriptionResource} />
+      <Resource {...tagResource} />
+      <Resource {...commentResource} />
       <Resource {...userResource} />
 
       {/* Start add the public routes */}
@@ -55,6 +62,7 @@ const App = () => (
           element={<ResponsiveDialog title={"Your payment failed!"} />}
         />
         <Route path="/reader" element={<Reader />} />
+        <Route path="/changePassword" element={<ChangePassword />} />
       </CustomRoutes>
       {/* End add the private routes */}
     </Admin>
