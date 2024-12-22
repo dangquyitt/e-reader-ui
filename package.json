@@ -24,6 +24,7 @@
     "react-hook-form": "^7.54.1",
     "react-reader": "^2.0.12",
     "react-router-dom": "^6.28.0",
+    "react-speech-kit": "^3.0.1",
     "rollup": "^4.28.1"
   },
   "devDependencies": {
