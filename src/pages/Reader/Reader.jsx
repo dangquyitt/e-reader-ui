@@ -10,7 +10,6 @@ import {
 import { useStore } from "react-admin";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import TextToSpeech from "../../components/Text-to-Speed/TextToSpeech";
-import Epub from "epubjs";
 import FPTTextToSpeech from "../../components/FPTTextToSpeech/FPTTextToSpeech";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -22,6 +21,9 @@ export default function Reader() {
     "currentReadingBook",
     {}
   );
+  const [location, setLocation] = useState(currentReadingBook.lastReadPosition);
+  console.log(location);
+
   const [readingProgress, setReadingProgress] = useState();
   const [iconPosition, setIconPosition] = useState({ top: 0, left: 0 });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -40,10 +42,6 @@ export default function Reader() {
     { code: "de", name: "German" },
     { code: "ja", name: "Japanese" },
   ];
-
-  const [title, setTitle] = useState("");
-  const [totalPages, setTotalPages] = useState("");
-  const [coverImage, setCoverImage] = useState("");
   const translateText = async (textToTranslate, selectedLanguage) => {
     try {
       // Gọi API MyMemory
@@ -72,6 +70,8 @@ export default function Reader() {
     setSelectedLanguage(newLanguage);
     translateText(selectedText, newLanguage);
   };
+
+  useEffect(() => {}, [location]);
 
   const handleRendition = (rendition) => {
     // Đăng ký sự kiện 'selected' để bắt văn bản được bôi đen

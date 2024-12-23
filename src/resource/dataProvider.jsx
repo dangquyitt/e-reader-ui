@@ -1,5 +1,22 @@
 import axiosInstance from "../services/api";
 
+const bookFormData = (params) => {
+  const formData = new FormData();
+  params.data.fileBook?.rawFile &&
+    formData.append("fileBook", params.data.fileBook.rawFile);
+  params.data.fileCoverImage?.rawFile &&
+    formData.append("fileCoverImage", params.data.fileCoverImage.rawFile);
+  params.data.title && formData.append("title", params.data.title);
+  params.data.description &&
+    formData.append("description", params.data.description);
+  params.data.totalPage && formData.append("totalPage", params.data.totalPage);
+  params.data.publishedYear &&
+    formData.append("publishedYear", params.data.publishedYear);
+  params.data.tagIds && formData.append("tagIds", params.data.tagIds);
+
+  return formData;
+};
+
 const dataProvider = {
   getList: async (resource, params) => {
     const { page, perPage } = params.pagination;
@@ -47,11 +64,33 @@ const dataProvider = {
   },
 
   create: async (resource, params) => {
+    if (resource === "books") {
+      const formData = bookFormData(params);
+      const response = await axiosInstance.post(`/${resource}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return { data: response.data };
+    }
     const response = await axiosInstance.post(`/${resource}`, params.data);
     return { data: response.data };
   },
 
   update: async (resource, params) => {
+    if (resource === "books") {
+      const formData = bookFormData(params);
+      const response = await axiosInstance.put(
+        `/${resource}/${params.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return { data: response.data };
+    }
     const url = `/${resource}/${params.id}`;
     const response = await axiosInstance.put(url, params.data);
     return { data: response.data };

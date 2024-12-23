@@ -21,15 +21,18 @@ import {
   FunctionField,
   useStore,
   TextInput,
+  SingleFieldList,
+  DateField,
 } from "react-admin";
 import React, { useState, useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useDataProvider } from "react-admin";
+import RemoveIcon from "@mui/icons-material/Remove";
 import {
   createBookCollection,
   deleteBookCollection,
 } from "../../services/bookCollection";
-import { Box, Rating, useTheme } from "@mui/material";
+import { Box, IconButton, Rating, useTheme } from "@mui/material";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { createFavorite, deleteFavorite } from "../../services/favorite";
 import { useNavigate } from "react-router-dom";
@@ -46,10 +49,17 @@ export const BookShow = (props) => {
   const dataProvider = useDataProvider();
   const refresh = useRefresh();
   const navigate = useNavigate();
+  const [bookId, setBookId] = useState(null);
   const [currentReadingBook, setCurrentReadingBook] = useStore(
     "currentReadingBook",
     {}
   );
+
+  useEffect(() => {
+    if (record) {
+      setBookId(record.id);
+    }
+  }, [record]);
 
   const handleClickRead = (e) => {
     setCurrentReadingBook(record);
@@ -57,10 +67,9 @@ export const BookShow = (props) => {
   };
 
   const handleAddBookToCollections = async (data) => {
-    console.log(data);
     for (const collectionId of data?.collectionIds || []) {
       try {
-        await createBookCollection(record.id, collectionId);
+        await createBookCollection(bookId, collectionId);
       } catch (error) {
         notify(error.response.data.message, { type: "error" });
       }
@@ -68,14 +77,29 @@ export const BookShow = (props) => {
     refresh();
   };
 
+  const handleCreateComment = async (data) => {
+    try {
+      const resp = await dataProvider.create("comments", {
+        data: {
+          content: data.comment,
+          bookId: bookId,
+        },
+      });
+      notify(resp.message, { type: "success" });
+    } catch (error) {
+      notify(error.response.data.message, { type: "error" });
+    }
+    refresh();
+  };
+
   const handleLikeUnlikeBook = async () => {
     try {
       if (record.isFavorite) {
-        const resp = await deleteFavorite(record.id);
+        const resp = await deleteFavorite(bookId);
         notify(resp.message, { type: "success" });
         return;
       }
-      const resp = await createFavorite(record.id);
+      const resp = await createFavorite(bookId);
       notify(resp.message, { type: "success" });
     } catch (error) {
       notify(error.response.data.message, { type: "error" });
@@ -84,7 +108,7 @@ export const BookShow = (props) => {
 
   const handleDeleteBookCollection = async (collectionId) => {
     try {
-      const resp = await deleteBookCollection(record.id, collectionId);
+      const resp = await deleteBookCollection(bookId, collectionId);
       notify(resp.message, { type: "success" });
     } catch (error) {
       notify(error.response.data.message, { type: "error" });
@@ -156,11 +180,9 @@ export const BookShow = (props) => {
           />{" "}
           <ImageField source="coverImageUrl" />
           <ArrayField source="tags">
-            <FunctionField
-              render={(rc) => {
-                console.log(rc);
-              }}
-            />
+            <SingleFieldList linkType={false}>
+              <ChipField source="name" size="small" />
+            </SingleFieldList>
           </ArrayField>
           <TextField source="id" sx={{ fontSize: "16px" }} />
           <TextField source="title" />
@@ -168,36 +190,37 @@ export const BookShow = (props) => {
           <TextField source="totalPage" />
           <NumberField source="publishedYear" />
         </TabbedShowLayout.Tab>
+
         <TabbedShowLayout.Tab label="Comments" path="comments">
           <ArrayField source="comments">
             <Datagrid bulkActionButtons={false}>
-              <TextField source="id" />
               <TextField source="content" />
+              <DateField source="createdAt" showTime />
             </Datagrid>
           </ArrayField>
-          <SimpleForm>
+          <SimpleForm
+            toolbar={<CustomToolbar />}
+            onSubmit={handleCreateComment}
+          >
             <TextInput source="comment" label="Add a Comment" fullWidth />
           </SimpleForm>
         </TabbedShowLayout.Tab>
+
         <TabbedShowLayout.Tab label="Collections" path="collections">
           <ArrayField source="collections">
             <Datagrid bulkActionButtons={false} rowClick>
-              <FunctionField
-                render={(rc) => {
-                  console.log(rc);
-                }}
-              />
               <ChipField source="name" />
               <FunctionField
                 render={(rc) => (
-                  <DeleteButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteBookCollection(rc.id);
-                      refresh();
-                    }}
-                    mutationMode="optimistic"
-                  />
+                  <IconButton>
+                    <RemoveIcon
+                      sx={{ color: "error.main" }}
+                      onClick={() => {
+                        handleDeleteBookCollection(rc.id);
+                        refresh();
+                      }}
+                    />
+                  </IconButton>
                 )}
               />
             </Datagrid>
@@ -210,7 +233,10 @@ export const BookShow = (props) => {
               <AutocompleteArrayInput
                 createItemLabel="Add a new collection: %{item}"
                 onCreate={handleCreateCollection}
-                filterToQuery={(searchText) => ({ name: searchText })}
+                filterToQuery={(searchText) => ({
+                  name: searchText,
+                  bookIdNe: bookId,
+                })}
               />
             </ReferenceArrayInput>
           </SimpleForm>

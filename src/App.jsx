@@ -20,6 +20,7 @@ import { commentResource } from "./resource/comment";
 import { subscriptionResource } from "./resource/subscription";
 import { tagResource } from "./resource/tag";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
+import { authorResource } from "./resource/author";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
@@ -32,10 +33,11 @@ const App = () => (
       <Resource {...bookResource} />
       <Resource {...favoriteResource} />
       <Resource {...collectionResource} />
-      <Resource {...subscriptionResource} />
       <Resource {...tagResource} />
+      <Resource {...subscriptionResource} />
       <Resource {...commentResource} />
-      <Resource {...userResource} />
+      <Resource {...authorResource} />
+      {/* <Resource {...userResource} /> */}
 
       {/* Start add the public routes */}
       <CustomRoutes noLayout>

@@ -1,47 +1,53 @@
 import {
-  CreateButton,
   Datagrid,
   ImageField,
   List,
-  NumberField,
-  Pagination,
   TextField,
-  TopToolbar,
-  SearchInput,
   TextInput,
-  SelectInput,
-  EditButton,
   FunctionField,
-  ChipField,
   RichTextField,
+  ReferenceArrayInput,
+  AutocompleteArrayInput,
 } from "react-admin";
 import Rating from "@mui/material/Rating";
 
-const postFilters = [
-  <SearchInput source="q" alwaysOn />,
+const filters = [
+  // <TextInput label="Search" source="q" alwaysOn />,
   <TextInput label="Title" source="title" alwaysOn />,
-  <SelectInput source="category" />,
+  <ReferenceArrayInput source="collectionIds" reference="collections" alwaysOn>
+    <AutocompleteArrayInput
+      filterToQuery={(searchText) => ({ name: searchText })}
+    />
+  </ReferenceArrayInput>,
+  <ReferenceArrayInput source="tagIds" reference="tags" alwaysOn>
+    <AutocompleteArrayInput
+      filterToQuery={(searchText) => ({ name: searchText })}
+    />
+  </ReferenceArrayInput>,
+  <ReferenceArrayInput source="authorIds" reference="authors" alwaysOn>
+    <AutocompleteArrayInput
+      filterToQuery={(searchText) => ({ name: searchText })}
+    />
+  </ReferenceArrayInput>,
 ];
 
 export const BookList = (props) => {
   return (
-    <>
-      <List filters={postFilters}>
-        <Datagrid bulkActionButtons={false}>
-          <ImageField source="coverImageUrl" />
-          <TextField source="id" />
-          <TextField source="title" />
-          <RichTextField source="description" />
-          <TextField source="totalPage" />
-          <FunctionField
-            source="rating"
-            render={(record) => (
-              <Rating defaultValue={record.rating} precision={0.1} readOnly />
-            )}
-          />
-          <TextField source="publishedYear" />
-        </Datagrid>
-      </List>
-    </>
+    <List filters={filters}>
+      <Datagrid bulkActionButtons={false}>
+        <ImageField source="coverImageUrl" />
+        <TextField source="id" />
+        <TextField source="title" />
+        <RichTextField source="description" />
+        <TextField source="totalPage" />
+        <FunctionField
+          source="rating"
+          render={(record) => (
+            <Rating defaultValue={record.rating} precision={0.1} readOnly />
+          )}
+        />
+        <TextField source="publishedYear" />
+      </Datagrid>
+    </List>
   );
 };
