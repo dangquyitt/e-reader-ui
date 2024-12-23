@@ -73,6 +73,8 @@ export default function Reader() {
 
   useEffect(() => {}, [location]);
 
+  useEffect(() => {}, [location]);
+
   const handleRendition = (rendition) => {
     // Đăng ký sự kiện 'selected' để bắt văn bản được bôi đen
     rendition.on("selected", (cfiRange, contents) => {

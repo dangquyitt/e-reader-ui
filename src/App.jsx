@@ -21,6 +21,8 @@ import { subscriptionResource } from "./resource/subscription";
 import { tagResource } from "./resource/tag";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import { authorResource } from "./resource/author";
+import { authorResource } from "./resource/author";
+import { priceResource } from "./resource/price";
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Admin
@@ -33,6 +35,8 @@ const App = () => (
       <Resource {...bookResource} />
       <Resource {...favoriteResource} />
       <Resource {...collectionResource} />
+      <Resource {...tagResource} />
+      <Resource {...priceResource} />
       <Resource {...tagResource} />
       <Resource {...subscriptionResource} />
       <Resource {...commentResource} />
