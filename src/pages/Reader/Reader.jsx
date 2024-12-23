@@ -12,6 +12,11 @@ import GTranslateIcon from "@mui/icons-material/GTranslate";
 import TextToSpeech from "../../components/Text-to-Speed/TextToSpeech";
 import Epub from "epubjs";
 import FPTTextToSpeech from "../../components/FPTTextToSpeech/FPTTextToSpeech";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 export default function Reader() {
   const [currentReadingBook, setCurrentReadingBook] = useStore(
     "currentReadingBook",
@@ -23,21 +28,29 @@ export default function Reader() {
   const [translatedText, setTranslatedText] = useState("");
   const [selectedText, setSelectedText] = useState("");
   const [showChild, setShowChild] = useState(true);
+  const [selectedLanguage, setSelectedLanguage] = useState("vi");
   const handleCloseDialog = () => {
     setIsDialogOpen(false); // Đóng dialog
     setSelectedText(""); // Xóa văn bản bôi đen
   };
+  const languages = [
+    { code: "vi", name: "Vietnamese" },
+    { code: "es", name: "Spanish" },
+    { code: "fr", name: "French" },
+    { code: "de", name: "German" },
+    { code: "ja", name: "Japanese" },
+  ];
 
   const [title, setTitle] = useState("");
   const [totalPages, setTotalPages] = useState("");
   const [coverImage, setCoverImage] = useState("");
-  const translateText = async (text) => {
+  const translateText = async (textToTranslate, selectedLanguage) => {
     try {
       // Gọi API MyMemory
       const response = await fetch(
         `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
-          text
-        )}&langpair=en|vi`,
+          textToTranslate
+        )}&langpair=en|${selectedLanguage}`,
         {
           method: "GET", // MyMemory chủ yếu sử dụng GET
         }
@@ -45,12 +58,19 @@ export default function Reader() {
 
       const data = await response.json();
       console.log(data.responseData.translatedText);
+      setTranslatedText(data.responseData.translatedText);
       // Lấy nội dung dịch từ phản hồi
       return data.responseData.translatedText || "Không thể dịch";
     } catch (error) {
       console.error("Error while translating:", error);
       return "Có lỗi xảy ra khi dịch.";
     }
+  };
+
+  const handleChange = (event) => {
+    const newLanguage = event.target.value;
+    setSelectedLanguage(newLanguage);
+    translateText(selectedText, newLanguage);
   };
 
   const handleRendition = (rendition) => {
@@ -111,6 +131,22 @@ export default function Reader() {
         <DialogContent>
           <p>{selectedText}</p>
           <p>Translate</p>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="language-select-label">Language</InputLabel>
+            <Select
+              labelId="language-select-label"
+              id="language-select"
+              value={selectedLanguage}
+              onChange={handleChange}
+            >
+              {languages.map((lang) => (
+                <MenuItem key={lang.code} value={lang.code}>
+                  {lang.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Select a language to translate to</FormHelperText>
+          </FormControl>
           <p>{translatedText}</p>
         </DialogContent>
         <DialogActions>
@@ -120,7 +156,7 @@ export default function Reader() {
           {showChild && (
             <>
               <TextToSpeech text={selectedText} language="en-US" />
-              <TextToSpeech text={selectedText} language="vi-VN" />
+              <TextToSpeech text={translatedText} language="vi-VN" />
               <FPTTextToSpeech text={translatedText} />
             </>
           )}
