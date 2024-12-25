@@ -6,7 +6,10 @@ const accessControlStrategies = {
     return true;
   },
   USER: ({ resource, action }) => {
-    return resource !== "books";
+    if (resource === "books" && (action === "list" || action === "show")) {
+      return true;
+    }
+    return true;
   },
 };
 
@@ -52,16 +55,13 @@ const authProvider = {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("roles");
   },
-  // async canAccess({ resource, action }) {
-  //   const roles = JSON.parse(localStorage.getItem("roles"));
-  //   console.log({ roles });
-
-  //   return roles.some((role) => {
-  //     console.log(role);
-
-  //     return accessControlStrategies[role]({ resource, action });
-  //   });
-  // },
+  async canAccess({ resource, action }) {
+    const roles = localStorage.getItem("roles").split(",");
+    console.log(roles);
+    return roles.some((role) => {
+      return accessControlStrategies[role]({ resource, action });
+    });
+  },
 };
 
 export default authProvider;

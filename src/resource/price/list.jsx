@@ -3,36 +3,44 @@ import {
   List,
   Pagination,
   TextField,
-  TopToolbar,
-  SearchInput,
-  TextInput,
-  SelectInput,
-  EditButton,
   ReferenceField,
-  ImageField,
-  DeleteButton,
+  DateField,
+  NumberField,
+  ReferenceArrayInput,
+  AutocompleteArrayInput,
+  ArrayField,
+  SingleFieldList,
+  ChipField,
+  SimpleList,
+  FunctionField,
 } from "react-admin";
-const bookFilters = [
-  <SearchInput source="q" alwaysOn />,
-  <TextInput label="Title" source="title" defaultValue="Hello, World!" />,
-  <SelectInput source="category" />,
+const filters = [
+  <ReferenceArrayInput source="planIds" reference="plans" alwaysOn>
+    <AutocompleteArrayInput
+      filterToQuery={(searchText) => ({ name: searchText })}
+    />
+  </ReferenceArrayInput>,
 ];
 
 export const PriceList = (props) => {
   return (
     <>
-      <List pagination={<Pagination />} filters={bookFilters}>
-        <Datagrid
-          bulkActionButtons={false}
-          rowClick={(id, resource, record) => {
-            return `/books/${record.bookId}/show`;
-          }}
-        >
-          <ReferenceField source="bookId" reference="books">
-            <ImageField source="coverImageUrl" />
-            <TextField source="title" />
-          </ReferenceField>
-          <DeleteButton mutationMode="optimistic" />
+      <List pagination={<Pagination />} filters={filters}>
+        <Datagrid bulkActionButtons={false}>
+          <TextField source="id" />
+          <DateField source="effectiveDate" />
+          <NumberField source="amount" />
+          <TextField source="currency" />
+          <ReferenceField source="planId" reference="plans" />
+          <ArrayField source="features">
+            <SingleFieldList>
+              <FunctionField
+                render={(record) => {
+                  console.log(record);
+                }}
+              />
+            </SingleFieldList>
+          </ArrayField>
         </Datagrid>
       </List>
     </>
