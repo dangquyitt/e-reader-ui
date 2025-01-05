@@ -10,8 +10,6 @@ import {
   AutocompleteArrayInput,
   ArrayField,
   SingleFieldList,
-  ChipField,
-  SimpleList,
   FunctionField,
 } from "react-admin";
 const filters = [

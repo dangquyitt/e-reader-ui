@@ -14,7 +14,6 @@ import { AppLayout } from "./AppLayout";
 import Pricing from "./pages/Pricing/Pricing";
 import { favoriteResource } from "./resource/favorite";
 import { collectionResource } from "./resource/collection";
-import { userResource } from "./resource/user";
 import ResponsiveDialog from "./components/Dialog/ResponsiveDialog";
 import { commentResource } from "./resource/comment";
 import { subscriptionResource } from "./resource/subscription";
@@ -54,20 +53,6 @@ const App = () => (
       {/* Start add the private routes */}
       <CustomRoutes>
         <Route path="/pricing" element={<Pricing />} />
-        <Route
-          path="/pricing/isSuccess"
-          element={
-            <ResponsiveDialog
-              title={"Congratulations on your successful payment!"}
-            />
-          }
-        />
-        <Route
-          path="/pricing/isFailure"
-          element={<ResponsiveDialog title={"Your payment failed!"} />}
-        />
-        <Route path="/reader" element={<Reader />} />
-        <Route path="/changePassword" element={<ChangePassword />} />
       </CustomRoutes>
       {/* End add the private routes */}
     </Admin>
