@@ -25,7 +25,7 @@ const TextToSpeech = ({ text, language }) => {
   return (
     <div>
       <button onClick={handleReadText}>
-        {isSpeaking ? <Button>Dừng đọc</Button> : <Button>Đọc văn bản</Button>}
+        {isSpeaking ? <Button>Stop</Button> : <Button>Read</Button>}
       </button>
     </div>
   );

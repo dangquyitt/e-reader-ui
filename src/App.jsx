@@ -8,7 +8,7 @@ import { Route } from "react-router-dom";
 import Register from "./pages/Register/Register";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import EmailVerification from "./pages/EmailVerification/EmailVerification";
-import BookShowLayout from "./pages/Reader/Reader";
+import Reader from "./pages/Reader/Reader";
 import { AppLayout } from "./AppLayout";
 import Pricing from "./pages/Pricing/Pricing";
 
@@ -45,7 +45,6 @@ const App = () => (
         <Route path="/register" element={<Register />} />
         <Route path="/resetPassword" element={<ResetPassword />} />
         <Route path="/emailVerification" element={<EmailVerification />} />
-        <Route path="/detail" element={<BookShowLayout />} />
       </CustomRoutes>
       {/* End add the public routes*/}
 
@@ -53,6 +52,7 @@ const App = () => (
       <CustomRoutes>
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/changePassword" element={<ChangePassword />} />
+        <Route path="/reader" element={<Reader />} />
       </CustomRoutes>
       {/* End add the private routes */}
     </Admin>

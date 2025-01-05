@@ -22,7 +22,6 @@ export default function Reader() {
     {}
   );
   const [location, setLocation] = useState(currentReadingBook.lastReadPosition);
-  console.log(location);
 
   const [readingProgress, setReadingProgress] = useState();
   const [iconPosition, setIconPosition] = useState({ top: 0, left: 0 });
@@ -32,8 +31,8 @@ export default function Reader() {
   const [showChild, setShowChild] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState("vi");
   const handleCloseDialog = () => {
-    setIsDialogOpen(false); // Đóng dialog
-    setSelectedText(""); // Xóa văn bản bôi đen
+    setIsDialogOpen(false);
+    setSelectedText("");
   };
   const languages = [
     { code: "vi", name: "Vietnamese" },
@@ -44,20 +43,18 @@ export default function Reader() {
   ];
   const translateText = async (textToTranslate, selectedLanguage) => {
     try {
-      // Gọi API MyMemory
       const response = await fetch(
         `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
           textToTranslate
         )}&langpair=en|${selectedLanguage}`,
         {
-          method: "GET", // MyMemory chủ yếu sử dụng GET
+          method: "GET",
         }
       );
 
       const data = await response.json();
       console.log(data.responseData.translatedText);
       setTranslatedText(data.responseData.translatedText);
-      // Lấy nội dung dịch từ phản hồi
       return data.responseData.translatedText || "Không thể dịch";
     } catch (error) {
       console.error("Error while translating:", error);
@@ -76,18 +73,15 @@ export default function Reader() {
   useEffect(() => {}, [location]);
 
   const handleRendition = (rendition) => {
-    // Đăng ký sự kiện 'selected' để bắt văn bản được bôi đen
     rendition.on("selected", (cfiRange, contents) => {
-      const selected = contents.window.getSelection(); // Lấy văn bản đã bôi đen
+      const selected = contents.window.getSelection();
       const text = selected.toString();
       setSelectedText(text);
-      // setIsDialogOpen(true); // Lưu văn bản đã chọn
-      const range = selected.getRangeAt(0); // Lấy range của văn bản
-      const rect = range.getBoundingClientRect(); // Lấy vị trí của văn bản bôi đen
-      // Cập nhật vị trí icon
+      const range = selected.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
       setIconPosition({
-        top: rect.top + window.scrollY - 5, // Vị trí top của icon
-        left: rect.left + window.scrollX + rect.width, // Vị trí left của icon (cộng thêm chiều rộng văn bản)
+        top: rect.top + window.scrollY - 5,
+        left: rect.left + window.scrollX + rect.width,
       });
       if (text) {
         translateText(text, "vi").then((translated) =>
@@ -103,20 +97,20 @@ export default function Reader() {
         title={currentReadingBook.title}
         location={location}
         locationChanged={(epubcfi) => setLocation(epubcfi)}
-        getRendition={handleRendition} // Gán hàm khi rendition sẵn sàng
+        getRendition={handleRendition}
       />
       {selectedText && (
         <div
           style={{
             position: "absolute",
             top: `${iconPosition.top}px`,
-            left: `${iconPosition.left}px`, // Điều chỉnh khoảng cách từ văn bản
+            left: `${iconPosition.left}px`,
             zIndex: 1000,
             cursor: "pointer",
           }}
         >
           <button
-            onClick={() => setIsDialogOpen(true)} // Mở dialog khi nhấn vào icon
+            onClick={() => setIsDialogOpen(true)}
             style={{
               background: "none",
               border: "none",
@@ -158,17 +152,10 @@ export default function Reader() {
           {showChild && (
             <>
               <TextToSpeech text={selectedText} language="en-US" />
-              <TextToSpeech text={translatedText} language="vi-VN" />
-              <FPTTextToSpeech text={translatedText} />
             </>
           )}
         </DialogActions>
       </Dialog>
-      <FPTTextToSpeech
-        text={
-          "Đảm bảo rằng trình duyệt của bạn cho phép phát âm thanh tự động mà không cần tương tác."
-        }
-      />
     </div>
   );
 }
