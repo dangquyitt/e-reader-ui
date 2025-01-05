@@ -8,17 +8,14 @@ import { Route } from "react-router-dom";
 import Register from "./pages/Register/Register";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import EmailVerification from "./pages/EmailVerification/EmailVerification";
-import Reader from "./pages/Reader/Reader";
 import BookShowLayout from "./pages/Reader/Reader";
 import { AppLayout } from "./AppLayout";
 import Pricing from "./pages/Pricing/Pricing";
 import { favoriteResource } from "./resource/favorite";
 import { collectionResource } from "./resource/collection";
-import ResponsiveDialog from "./components/Dialog/ResponsiveDialog";
 import { commentResource } from "./resource/comment";
 import { subscriptionResource } from "./resource/subscription";
 import { tagResource } from "./resource/tag";
-import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import { authorResource } from "./resource/author";
 import { priceResource } from "./resource/price";
 const App = () => (

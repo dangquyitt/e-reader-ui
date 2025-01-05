@@ -14,6 +14,7 @@ import { Grid } from "@mui/material";
 import { useState } from "react";
 import { getAllPlans } from "../../services/plan";
 import { useEffect } from "react";
+import { getPaymentUrl } from "../../services/payment";
 const tiers = [
   {
     title: "Free",
@@ -72,6 +73,15 @@ export default function Pricing() {
     fetchPlans();
   }, []);
 
+  const handleCheckout = async (plan) => {
+    console.log(plan);
+
+    try {
+      const response = await getPaymentUrl(plan.id);
+      window.location.href = response.data;
+    } catch (error) {}
+  };
+
   return (
     <Container
       id="pricing"
@@ -111,10 +121,10 @@ export default function Pricing() {
         spacing={3}
         sx={{ alignItems: "center", justifyContent: "center", width: "100%" }}
       >
-        {tiers.map((tier) => (
+        {plans?.map((plan) => (
           <Grid
-            size={{ xs: 12, sm: tier.title === "Enterprise" ? 12 : 6, md: 4 }}
-            key={tier.title}
+            size={{ xs: 12, sm: plan.name === "Prenium" ? 12 : 6, md: 4 }}
+            key={plan.name}
           >
             <Card
               sx={[
@@ -124,7 +134,7 @@ export default function Pricing() {
                   flexDirection: "column",
                   gap: 4,
                 },
-                tier.title === "Professional" &&
+                plan.name === "Standard" &&
                   ((theme) => ({
                     border: "none",
                     background:
@@ -148,16 +158,19 @@ export default function Pricing() {
                       alignItems: "center",
                       gap: 2,
                     },
-                    tier.title === "Professional"
+                    plan.name === "Standard"
                       ? { color: "grey.100" }
                       : { color: "" },
                   ]}
                 >
                   <Typography component="h3" variant="h6">
-                    {tier.title}
+                    {plan.name}
                   </Typography>
-                  {tier.title === "Professional" && (
-                    <Chip icon={<AutoAwesomeIcon />} label={tier.subheader} />
+                  {plan.name === "Standard" && (
+                    <Chip
+                      icon={<AutoAwesomeIcon />}
+                      label={plan?.price?.metadata?.subheader}
+                    />
                   )}
                 </Box>
                 <Box
@@ -166,20 +179,24 @@ export default function Pricing() {
                       display: "flex",
                       alignItems: "baseline",
                     },
-                    tier.title === "Professional"
+                    plan.name === "Standard"
                       ? { color: "grey.50" }
                       : { color: null },
                   ]}
                 >
                   <Typography component="h3" variant="h2">
-                    ${tier.price}
+                    ${plan?.price?.amount}
                   </Typography>
                   <Typography component="h3" variant="h6">
-                    &nbsp; per month
+                    &nbsp;{" "}
+                    {"/" +
+                      plan?.price?.duration +
+                      " " +
+                      plan?.price?.durationUnit.toLowerCase()}
                   </Typography>
                 </Box>
                 <Divider sx={{ my: 2, opacity: 0.8, borderColor: "divider" }} />
-                {tier.description.map((line) => (
+                {plan?.price?.features?.map((line) => (
                   <Box
                     key={line}
                     sx={{
@@ -194,7 +211,7 @@ export default function Pricing() {
                         {
                           width: 20,
                         },
-                        tier.title === "Professional"
+                        plan.name === "Standard"
                           ? { color: "primary.light" }
                           : { color: "primary.main" },
                       ]}
@@ -203,7 +220,7 @@ export default function Pricing() {
                       variant="subtitle2"
                       component={"span"}
                       sx={[
-                        tier.title === "Professional"
+                        plan.name === "Standard"
                           ? { color: "grey.50" }
                           : { color: null },
                       ]}
@@ -216,10 +233,11 @@ export default function Pricing() {
               <CardActions>
                 <Button
                   fullWidth
-                  variant={tier.buttonVariant}
-                  color={tier.buttonColor}
+                  variant={plan?.price?.metadata?.buttonVariant}
+                  color={plan?.price?.metadata?.buttonColor}
+                  onClick={() => handleCheckout(plan)}
                 >
-                  {tier.buttonText}
+                  {plan?.price?.metadata?.buttonText}
                 </Button>
               </CardActions>
             </Card>
