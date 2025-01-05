@@ -10,20 +10,45 @@ import {
 import { useStore } from "react-admin";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import TextToSpeech from "../../components/Text-to-Speed/TextToSpeech";
-import FPTTextToSpeech from "../../components/FPTTextToSpeech/FPTTextToSpeech";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { getFileURL } from "../../services/book";
+import { useNavigate } from "react-router-dom";
+
 export default function Reader() {
   const [currentReadingBook, setCurrentReadingBook] = useStore(
     "currentReadingBook",
     {}
   );
-  const [location, setLocation] = useState(currentReadingBook.lastReadPosition);
+  const navigate = useNavigate();
+  const [fileURL, setFileURL] = useState("");
+  const [isOpenPaymentDialog, setIsOpenPaymentDialog] = useState(false);
 
-  const [readingProgress, setReadingProgress] = useState();
+  const fetchFileURL = async () => {
+    try {
+      const response = await getFileURL(currentReadingBook.id);
+      setFileURL(response.data);
+    } catch (error) {
+      if (error.status === 402) {
+        setIsOpenPaymentDialog(true);
+      }
+    }
+  };
+  useEffect(() => {
+    fetchFileURL();
+  }, []);
+
+  const handleClosePaymentDialog = () => {
+    setIsOpenPaymentDialog(false);
+    navigate("/pricing");
+  };
+
+  const [location, setLocation] = useState(
+    currentReadingBook.currentLocation || 0
+  );
   const [iconPosition, setIconPosition] = useState({ top: 0, left: 0 });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [translatedText, setTranslatedText] = useState("");
@@ -68,10 +93,6 @@ export default function Reader() {
     translateText(selectedText, newLanguage);
   };
 
-  useEffect(() => {}, [location]);
-
-  useEffect(() => {}, [location]);
-
   const handleRendition = (rendition) => {
     rendition.on("selected", (cfiRange, contents) => {
       const selected = contents.window.getSelection();
@@ -93,10 +114,14 @@ export default function Reader() {
   return (
     <div style={{ height: "100vh" }}>
       <ReactReader
-        url={currentReadingBook.fileUrl}
+        url={fileURL}
         title={currentReadingBook.title}
         location={location}
-        locationChanged={(epubcfi) => setLocation(epubcfi)}
+        locationChanged={(epubcfi) => {
+          currentReadingBook.currentLocation = epubcfi;
+          setCurrentReadingBook(currentReadingBook);
+          setLocation(epubcfi);
+        }}
         getRendition={handleRendition}
       />
       {selectedText && (
@@ -154,6 +179,17 @@ export default function Reader() {
               <TextToSpeech text={selectedText} language="en-US" />
             </>
           )}
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isOpenPaymentDialog} onClose={handleClosePaymentDialog}>
+        <DialogTitle>Subscription Required</DialogTitle>
+        <DialogContent>
+          <p>You need a subscription to access this book. </p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePaymentDialog} color="primary">
+            Close and View Pricing
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

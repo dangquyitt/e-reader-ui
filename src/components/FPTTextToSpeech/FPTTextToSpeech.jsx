@@ -16,8 +16,6 @@ const FPTTextToSpeech = ({ text }) => {
 
       if (response.ok) {
         const audio = await response.json();
-        console.log(audio);
-        console.log("Audio URL:", audio.async); // Kiểm tra URL trả về
         setAudioUrl(audio.async);
       } else {
         alert("Không thể tạo audio, vui lòng kiểm tra API Key hoặc văn bản.");
