@@ -4,7 +4,7 @@ import { Button, Box, TextField, Container, Typography } from "@mui/material";
 import { changePassword } from "../../services/user";
 import { useNotify } from "react-admin";
 
-export default function ChangePassword(props) {
+export default function ChangePassword() {
   const {
     register,
     handleSubmit,

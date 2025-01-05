@@ -9,7 +9,24 @@ const accessControlStrategies = {
     if (resource === "books" && (action === "list" || action === "show")) {
       return true;
     }
-    return true;
+
+    if (resource === "collections") {
+      return true;
+    }
+
+    if (resource === "subscriptions" && action === "list") {
+      return true;
+    }
+
+    if (resource === "favorites") {
+      return true;
+    }
+
+    if (resource === "comments") {
+      return true;
+    }
+
+    return false;
   },
 };
 
@@ -57,7 +74,6 @@ const authProvider = {
   },
   async canAccess({ resource, action }) {
     const roles = localStorage.getItem("roles").split(",");
-    console.log(roles);
     return roles.some((role) => {
       return accessControlStrategies[role]({ resource, action });
     });

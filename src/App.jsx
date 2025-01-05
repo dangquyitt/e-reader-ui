@@ -11,6 +11,8 @@ import EmailVerification from "./pages/EmailVerification/EmailVerification";
 import BookShowLayout from "./pages/Reader/Reader";
 import { AppLayout } from "./AppLayout";
 import Pricing from "./pages/Pricing/Pricing";
+
+import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import { favoriteResource } from "./resource/favorite";
 import { collectionResource } from "./resource/collection";
 import { commentResource } from "./resource/comment";
@@ -50,6 +52,7 @@ const App = () => (
       {/* Start add the private routes */}
       <CustomRoutes>
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/changePassword" element={<ChangePassword />} />
       </CustomRoutes>
       {/* End add the private routes */}
     </Admin>
